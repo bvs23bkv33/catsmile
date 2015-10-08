@@ -2,8 +2,7 @@
 
 USING_NS_CC;
 
-Scene* HelloWorld::createScene()
-{
+Scene* HelloWorld::createScene() {
     // 'scene' is an autorelease object
     auto scene = Scene::create();
     
@@ -18,14 +17,14 @@ Scene* HelloWorld::createScene()
 }
 
 // on "init" you need to initialize your instance
-bool HelloWorld::init()
-{
+bool HelloWorld::init() {
     //////////////////////////////
     // 1. super init first
-    if ( !Layer::init() )
-    {
+    if ( !Layer::init() ) {
         return false;
     }
+
+	this->scheduleUpdate();
     
     Size visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
@@ -41,8 +40,8 @@ bool HelloWorld::init()
 
 	for (int i = 0; i < 7; i++) {
 		for (int j = 0; j < 10; j++) {
-			circlesCoords[i][j][0] = (float)(((float)i - 3.25) + (float)(j % 2) / 2) * circleSize;
-			circlesCoords[i][j][1] = ((float)j / 2 - 2) * (float)sqrt(3) * circleSize;
+			circlesCoords[i][j][0] = (float)(((float)i + 2.7) + (float)(j % 2) / 2) * circleSize;
+			circlesCoords[i][j][1] = ((float)j / 2 + 0.3) * (float)sqrt(3) * circleSize;
 			circlesPresent[i][j] = false;
 			circlesToFall[i][j] = false;
 			circlesToVanish[i][j] = false;
@@ -93,8 +92,8 @@ bool HelloWorld::init()
 
 	for (int i = 0; i < 12; i++) {
 		for (int j = 0; j < 8; j++) {
-			cursorCoords[i][j][0] = (float)(i * 0.5 - 2.75) * circleSize;
-			cursorCoords[i][j][1] = (float)(j * 3 - 11 + ((i + j) % 2)) * (float)sqrt(3) / 6 * circleSize;
+			cursorCoords[i][j][0] = (float)(i * 0.5 + 3.2) * circleSize;
+			cursorCoords[i][j][1] = (float)(j * 3 + 2.7 + ((i + j) % 2)) * (float)sqrt(3) / 6 * circleSize;
 		}
 	}
 
@@ -109,46 +108,46 @@ bool HelloWorld::init()
 	cursor->setPositionY(cursorCoords[cpx][cpy][1]);
 	this->addChild(cursor, 3);
 
-	auto buttonSize = visibleSize.height / 3;
-
-	m_rotateRightButton = ui::Button::create("rotate.png");
-	m_rotateRightButton->setPosition(Vec2((-visibleSize.width + buttonSize) / 2, buttonSize));
-	m_rotateRightButton->setScale(buttonSize / m_rotateRightButton->getContentSize().height);
-	m_rotateRightButton->setScaleX(-m_rotateRightButton->getScaleX());
-	m_rotateRightButton->addTouchEventListener(CC_CALLBACK_1(HelloWorld::rotateRightCallback, this));
-	this->addChild(m_rotateRightButton);
+	auto buttonSize = visibleSize.height / 4;
 
 	m_rotateLeftButton = ui::Button::create("rotate.png");
-	m_rotateLeftButton->setPosition(Vec2((visibleSize.width - buttonSize) / 2, -buttonSize));
+	m_rotateLeftButton->setPosition(Vec2(visibleSize.width - buttonSize / 2, visibleSize.height - buttonSize / 2));
 	m_rotateLeftButton->setScale(buttonSize / m_rotateLeftButton->getContentSize().height);
-	m_rotateLeftButton->addTouchEventListener(CC_CALLBACK_1(HelloWorld::rotateLeftCallback, this));
+	m_rotateLeftButton->setScaleY(-m_rotateLeftButton->getScaleY());
+	m_rotateLeftButton->addTouchEventListener(CC_CALLBACK_2(HelloWorld::rotateLeftCallback, this));
 	this->addChild(m_rotateLeftButton);
 
+	m_rotateRightButton = ui::Button::create("rotate.png");
+	m_rotateRightButton->setPosition(Vec2(visibleSize.width - buttonSize / 2, buttonSize / 2));
+	m_rotateRightButton->setScale(buttonSize / m_rotateRightButton->getContentSize().height);
+	m_rotateRightButton->addTouchEventListener(CC_CALLBACK_2(HelloWorld::rotateRightCallback, this));
+	this->addChild(m_rotateRightButton);
+
 	m_moveRightButton = ui::Button::create("select.png");
-	m_moveRightButton->setPosition(Vec2((visibleSize.width - buttonSize) / 2, 0));
+	m_moveRightButton->setPosition(Vec2(visibleSize.width - buttonSize / 2, visibleSize.height / 2));
 	m_moveRightButton->setScale(buttonSize / m_moveRightButton->getContentSize().height);
-	m_moveRightButton->addTouchEventListener(CC_CALLBACK_1(HelloWorld::moveRightCallback, this));
+	m_moveRightButton->addTouchEventListener(CC_CALLBACK_2(HelloWorld::moveRightCallback, this));
 	this->addChild(m_moveRightButton);
 
 	m_moveLeftButton = ui::Button::create("select.png");
-	m_moveLeftButton->setPosition(Vec2((-visibleSize.width + buttonSize) / 2, 0));
+	m_moveLeftButton->setPosition(Vec2(buttonSize / 2, visibleSize.height / 2));
 	m_moveLeftButton->setScale(buttonSize / m_moveLeftButton->getContentSize().height);
 	m_moveLeftButton->setRotation(180);
-	m_moveLeftButton->addTouchEventListener(CC_CALLBACK_1(HelloWorld::moveLeftCallback, this));
+	m_moveLeftButton->addTouchEventListener(CC_CALLBACK_2(HelloWorld::moveLeftCallback, this));
 	this->addChild(m_moveLeftButton);
 
 	m_moveUpButton = ui::Button::create("select.png");
-	m_moveUpButton->setPosition(Vec2((+visibleSize.width - buttonSize) / 2, buttonSize));
+	m_moveUpButton->setPosition(Vec2(buttonSize / 2, visibleSize.height - buttonSize / 2));
 	m_moveUpButton->setScale(buttonSize / m_moveUpButton->getContentSize().height);
 	m_moveUpButton->setRotation(270);
-	m_moveUpButton->addTouchEventListener(CC_CALLBACK_1(HelloWorld::moveUpCallback, this));
+	m_moveUpButton->addTouchEventListener(CC_CALLBACK_2(HelloWorld::moveUpCallback, this));
 	this->addChild(m_moveUpButton);
 
 	m_moveDownButton = ui::Button::create("select.png");
-	m_moveDownButton->setPosition(Vec2((-visibleSize.width + buttonSize) / 2, -buttonSize));
+	m_moveDownButton->setPosition(Vec2(buttonSize / 2, buttonSize / 2));
 	m_moveDownButton->setScale(buttonSize / m_moveDownButton->getContentSize().height);
 	m_moveDownButton->setRotation(90);
-	m_moveDownButton->addTouchEventListener(CC_CALLBACK_1(HelloWorld::moveDownCallback, this));
+	m_moveDownButton->addTouchEventListener(CC_CALLBACK_2(HelloWorld::moveDownCallback, this));
 	this->addChild(m_moveDownButton);
 
 	return true;
@@ -296,7 +295,7 @@ void HelloWorld::update(float delta) {
 }
 
 void HelloWorld::circleCreate(int i, int j) {
-	int sectorsInCircle = (int)(circleSize / 3.5);
+	int sectorsInCircle = (int)(circleSize / 2);
 	circles[i][j] = DrawNode::create();
 	circlesColors[i][j] = rand() % 7;
 	circlesPresent[i][j] = true;
@@ -354,61 +353,77 @@ void HelloWorld::vanishCheck() {
 	}
 }
 
-void HelloWorld::rotateRightCallback(Ref* pSender) {
-	if ((!circlesTurn) && (!circlesVanishing) && (!circlesFalling)) {
-		circlesTurn = true;
-		direction = true;
-	}
-}
-
-void HelloWorld::rotateLeftCallback(Ref* pSender) {
-	if ((!circlesTurn) && (!circlesVanishing) && (!circlesFalling)) {
-		circlesTurn = true;
-		direction = false;
-	}
-}
-
-void HelloWorld::moveRightCallback(Ref* pSender) {
-	if (!circlesTurn) {
-		if (cpx == 11) {
-			cpx = 0;
-		} else {
-			++cpx;
+void HelloWorld::rotateRightCallback(Ref* pSender, ui::Widget::TouchEventType input) {
+	if (input == ui::Widget::TouchEventType::ENDED) {
+		if ((!circlesTurn) && (!circlesVanishing) && (!circlesFalling)) {
+			circlesTurn = true;
+			direction = true;
 		}
-		commonTouch();
 	}
 }
 
-void HelloWorld::moveLeftCallback(Ref* pSender) {
-	if (!circlesTurn) {
-		if (!cpx) {
-			cpx = 11;
-		} else {
-			--cpx;
+void HelloWorld::rotateLeftCallback(Ref* pSender, ui::Widget::TouchEventType input) {
+	if (input == ui::Widget::TouchEventType::ENDED) {
+		if ((!circlesTurn) && (!circlesVanishing) && (!circlesFalling)) {
+			circlesTurn = true;
+			direction = false;
 		}
-		commonTouch();
 	}
 }
 
-void HelloWorld::moveUpCallback(Ref* pSender) {
-	if (!circlesTurn) {
-		if (cpy == 7) {
-			cpy = 0;
-		} else {
-			++cpy;
+void HelloWorld::moveRightCallback(Ref* pSender, ui::Widget::TouchEventType input) {
+	if (input == ui::Widget::TouchEventType::ENDED) {
+		if (!circlesTurn) {
+			if (cpx == 11) {
+				cpx = 0;
+			}
+			else {
+				++cpx;
+			}
+			commonTouch();
 		}
-		commonTouch();
 	}
 }
 
-void HelloWorld::moveDownCallback(Ref* pSender) {
-	if (!circlesTurn) {
-		if (!cpy) {
-			cpy = 7;
-		} else {
-			--cpy;
+void HelloWorld::moveLeftCallback(Ref* pSender, ui::Widget::TouchEventType input) {
+	if (input == ui::Widget::TouchEventType::ENDED) {
+		if (!circlesTurn) {
+			if (!cpx) {
+				cpx = 11;
+			}
+			else {
+				--cpx;
+			}
+			commonTouch();
 		}
-		commonTouch();
+	}
+}
+
+void HelloWorld::moveUpCallback(Ref* pSender, ui::Widget::TouchEventType input) {
+	if (input == ui::Widget::TouchEventType::ENDED) {
+		if (!circlesTurn) {
+			if (cpy == 7) {
+				cpy = 0;
+			}
+			else {
+				++cpy;
+			}
+			commonTouch();
+		}
+	}
+}
+
+void HelloWorld::moveDownCallback(Ref* pSender, ui::Widget::TouchEventType input) {
+	if (input == ui::Widget::TouchEventType::ENDED) {
+		if (!circlesTurn) {
+			if (!cpy) {
+				cpy = 7;
+			}
+			else {
+				--cpy;
+			}
+			commonTouch();
+		}
 	}
 }
 
